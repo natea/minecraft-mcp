@@ -63,6 +63,7 @@ async def test_place_multiple_entities(mock_context, mock_editor, mock_interface
     assert result["success"] is True
     assert result["placed"] == 3
     assert mock_context.info.called
+    assert mock_context.error.called
 
 @pytest.mark.asyncio
 async def test_place_entity_with_nbt(mock_context, mock_editor, mock_interface):
@@ -87,6 +88,7 @@ async def test_place_entity_with_nbt(mock_context, mock_editor, mock_interface):
     
     # Assert
     assert result["success"] is True
+    assert result["placed"] == len(entities)
     assert result["placed"] == 1
     
     # Verify the NBT data was passed correctly

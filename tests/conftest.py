@@ -13,6 +13,18 @@ from fastmcp import Context
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+# Patch geometry and interface imports in src.gdmc_mcp.server
+import pytest
+from unittest.mock import patch
+
+@pytest.fixture(autouse=True)
+def patch_geometry_and_interface(mock_geometry, mock_interface):
+    with patch("src.gdmc_mcp.server.geometry", mock_geometry), \
+         patch("src.gdmc_mcp.server.gdpc_interface", mock_interface):
+        yield
+
+# Mock the GDPC modules
+
 # Mock the GDPC modules
 class MockBlock:
     """Mock implementation of GDPC Block class."""
@@ -78,6 +90,8 @@ class MockEditor:
         
     def getBlockGlobal(self, position):
         """Mock get block."""
+        if position is None:
+            return MockBlock("minecraft:air")
         pos_key = tuple(position)
         return self._blocks.get(pos_key, MockBlock("minecraft:air"))
         

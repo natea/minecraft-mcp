@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Simple test for the context handling fix in tutorial tools.
 This directly tests that our fix for the NoneType error works.
@@ -7,6 +6,7 @@ This directly tests that our fix for the NoneType error works.
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+import pytest
 
 # Add the project root to the Python path to allow imports
 project_root = Path(__file__).parent.parent
@@ -52,49 +52,30 @@ async def mock_tutorial_function(
     # Return a simple result
     return {"success": True, "position": position, "size": size}
 
-async def run_tests():
-    """Run the actual tests."""
-    # Create a mock editor
-    editor = MockEditor()
-    
+@pytest.mark.asyncio
+async def test_context_handling_none_context():
+    """Test that mock_tutorial_function raises ValueError with None context."""
     # Test with None context (should raise ValueError)
     print("\nTest 1: Calling with None context (should raise ValueError)")
-    try:
+    with pytest.raises(ValueError, match="Context is required for this tool"):
         # We need to await the function since it's async
         await mock_tutorial_function(
             position=[0, 65, 0],
             size=3,
             ctx=None
         )
-        print("❌ Test failed: Expected ValueError but no exception was raised")
-    except ValueError as e:
-        print(f"✅ Test passed: Got expected ValueError: {e}")
-    except Exception as e:
-        print(f"❌ Test failed: Got unexpected exception: {e}")
-    
+
+@pytest.mark.asyncio
+async def test_context_handling_valid_context():
+    """Test that mock_tutorial_function works with valid context."""
     # Test with valid context
     print("\nTest 2: Calling with valid context")
-    try:
-        mock_ctx = MockContext(editor)
-        # Just check that it doesn't raise an error when accessing ctx.request_context
-        result = await mock_tutorial_function(
-            position=[0, 65, 0],
-            size=3,
-            ctx=mock_ctx
-        )
-        print(f"✅ Test passed: No exception when accessing context. Result: {result}")
-    except Exception as e:
-        print(f"❌ Test failed with error: {e}")
-
-def main():
-    """Test the context handling fix."""
-    print("Testing context handling fix in tutorial tools...")
-    
-    # Use asyncio.run to run the async tests
-    import asyncio
-    asyncio.run(run_tests())
-    
-    print("\nAll tests completed!")
-
-if __name__ == "__main__":
-    main()
+    editor = MockEditor()
+    mock_ctx = MockContext(editor)
+    # Just check that it doesn't raise an error when accessing ctx.request_context
+    result = await mock_tutorial_function(
+        position=[0, 65, 0],
+        size=3,
+        ctx=mock_ctx
+    )
+    assert result["success"] is True

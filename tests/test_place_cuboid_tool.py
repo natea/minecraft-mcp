@@ -54,7 +54,7 @@ async def test_place_hollow_cuboid(mock_context, mock_editor, mock_geometry):
     assert result["success"] is True
     assert result["corner1"] == [10, 64, 10]
     assert result["corner2"] == [15, 69, 15]
-    assert "Block(minecraft:stone)" in result["block"]
+    assert result["block"] == "Block(minecraft:stone)"
     assert result["hollow"] is True
     assert mock_context.info.called
 
@@ -76,7 +76,7 @@ async def test_place_cuboid_with_block_states(mock_context, mock_editor, mock_ge
     assert result["success"] is True
     assert result["corner1"] == [10, 64, 10]
     assert result["corner2"] == [15, 69, 15]
-    assert "Block(minecraft:oak_log)" in result["block"]
+    assert result["block"] == "Block(minecraft:oak_log)"
     assert mock_context.info.called
 
 @pytest.mark.asyncio

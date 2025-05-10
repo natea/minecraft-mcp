@@ -9,11 +9,13 @@ import json
 import sys
 import os
 from pathlib import Path
+import pytest
 
 from fastmcp import Client
 
-async def main():
-    """Run a test of the tutorial_build_village tool."""
+@pytest.mark.asyncio
+async def test_tutorial_build_village_mock():
+    """Run a test of the tutorial_build_village tool with a mock transport."""
     # For testing purposes, let's use a mock transport
     # This will allow us to test the client without actually connecting to a server
     from fastmcp.client.transports import ClientTransport
@@ -35,36 +37,42 @@ async def main():
         async def connect_session(self, **kwargs):
             """Implement the abstract method required by ClientTransport."""
             print("Mock transport connected")
-            return self
+            class AsyncContextManager:
+                async def __aenter__(self_inner):
+                    return self
+                async def __aexit__(self_inner, exc_type, exc_val, exc_tb):
+                    pass
+            return AsyncContextManager()
     
     # Use the mock transport for testing
     transport = MockTransport()
     client = Client(transport)
-    
+
+    # Patch client to support async context manager
+    async def aenter():
+        return client
+
+    async def aexit(exc_type, exc_val, exc_tb):
+        return None
+
+    client.__aenter__ = aenter
+    client.__aexit__ = aexit
+
     # Use async context manager pattern
     async with client:
-        print("Connected to GDMC MCP server")
+        # Test the tutorial_build_village tool
+        result = await client.call_tool(
+            "tutorial_build_village",
+            {
+                "position": [0, 65, 0],
+                "size": 3
+            }
+        )
         
-        try:
-            # Test the tutorial_build_village tool
-            print("\n--- Testing tutorial_build_village tool ---")
-            result = await client.call_tool(
-                "tutorial_build_village",
-                {
-                    "position": [0, 65, 0],
-                    "size": 3
-                }
-            )
-            
-            print(f"Result: {json.dumps(result, indent=2)}")
-            print("\nTest completed successfully!")
-            
-        except Exception as e:
-            print(f"Error: {e}")
-            
-        # The context manager will handle disconnection automatically
-        print("Disconnected from GDMC MCP server")
-
+        # Verify we got a response
+        assert isinstance(result, dict)
+        assert "result" in result
+        assert result["result"] == "This is a mock response"
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(test_tutorial_build_village_mock())

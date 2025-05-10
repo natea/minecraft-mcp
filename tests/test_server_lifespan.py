@@ -29,12 +29,13 @@ async def test_lifespan_success():
         return None
     
     # Act
-    with patch("src.gdmc_mcp.server.anyio.to_thread.run_sync", mock_run_sync):
+    with patch("anyio.to_thread.run_sync", mock_run_sync):
         async with lifespan(mock_server) as context:
             # Assert during lifespan
             assert "editor" in context
             assert context["editor"] == mock_editor
             assert mock_editor.checkConnection.called
+            assert mock_editor.flushBuffer.called
     
     # Assert after lifespan
     assert mock_editor.flushBuffer.called
@@ -114,6 +115,7 @@ def test_get_editor_missing(mock_context):
     
     # Act & Assert
     with pytest.raises(RuntimeError, match="GDPC Editor not found"):
+        _get_editor(mock_context)
         _get_editor(mock_context)
 
 def test_get_editor_wrong_type(mock_context):

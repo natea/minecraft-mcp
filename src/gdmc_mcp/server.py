@@ -8,6 +8,7 @@ from gdpc import Editor, Block, Box
 from gdpc import interface as gdpc_interface # Use gdpc's interface module directly for some actions
 from gdpc.exceptions import InterfaceConnectionError, BuildAreaNotSetError
 from gdpc.vector_tools import Vec3iLike, ivec3 # Import ivec3 for explicit casting
+from gdpc import geometry
 from pydantic import Field
 from typing_extensions import Annotated
 
@@ -138,8 +139,6 @@ async def place_cuboid(
     ctx: Context
 ) -> dict[str, Any]:
     """Places a solid or hollow cuboid."""
-    from gdpc import geometry # Import here as it's less common
-
     editor = _get_editor(ctx)
     c1 = corner1.to_ivec3()
     c2 = corner2.to_ivec3()
