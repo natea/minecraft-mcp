@@ -1,0 +1,52 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "${env:SUPABASE_ACCESS_TOKEN}"
+      ],
+      "alwaysAllow": [
+        "list_tables",
+        "execute_sql",
+        "listTables",
+        "list_projects",
+        "list_organizations",
+        "get_organization",
+        "apply_migration",
+        "get_project",
+        "execute_query",
+        "generate_typescript_types",
+        "listProjects"
+      ]
+    },
+    "mem0": {
+      "url": "https://mcp.composio.dev/composio/server/<YOUR_MCP_SERVER_ID>"
+    },
+    "firecrawl": {
+      "url": "https://mcp.composio.dev/composio/server/<YOUR_MCP_SERVER_ID>",
+      "alwaysAllow": [
+        "FIRECRAWL_SEARCH",
+        "FIRECRAWL_MAP_URLS",
+        "FIRECRAWL_CRAWL_URLS",
+        "FIRECRAWL_EXTRACT",
+        "FIRECRAWL_SCRAPE_EXTRACT_DATA_LLM"
+      ],
+      "timeout": 1800
+    },
+    "perplexityai": {
+      "url": "https://mcp.composio.dev/composio/server/<YOUR_MCP_SERVER_ID>",
+      "alwaysAllow": [
+        "PERPLEXITYAI_PERPLEXITY_AI_SEARCH"
+      ]
+    },
+    "github": {
+      "url": "https://mcp.composio.dev/composio/server/<YOUR_MCP_SERVER_ID>",
+      "alwaysAllow": [
+        "GITHUB_GET_REPO"
+      ]
+    }
+  }
+}

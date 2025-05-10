@@ -1,0 +1,24 @@
+# pyproject.toml
+[project]
+name = "fastmcp-gdmc-bridge"
+version = "0.1.0"
+description = "A FastMCP server wrapping the GDPC library for Minecraft interaction."
+authors = [{ name = "Nate Aune" }]
+dependencies = [
+    # Pinning versions is good practice, adjust as needed
+    "fastmcp>=2.0.0",
+    "gdpc>=8.1.0", # Ensure compatibility with GDPC features used
+]
+requires-python = ">=3.10" # FastMCP requires 3.10+
+readme = "README.md"
+
+[project.scripts]
+# Optional: If you want a direct script to run the server
+# gdmc-mcp = "gdmc_mcp.server:run_server_sync"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gdmc_mcp"]

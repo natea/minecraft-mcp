@@ -1,0 +1,8 @@
+gdpc_llm.txt
+.DS_Store
+.roo/mcp.json.nate
+minecraft-fabric/
+__pycache__
+htmlcov/
+.venv/
+.coverage
